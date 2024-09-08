@@ -1,5 +1,5 @@
 // testing lists
-#include "list.h"
+#include "dList.h"
 
 
 int main(){
