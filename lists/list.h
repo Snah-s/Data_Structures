@@ -1,5 +1,4 @@
 #include <iostream>
-#include <cmath>
 
 template <typename T>
 struct Node {
@@ -11,54 +10,10 @@ struct Node {
   Node(T data, Node<T> *_next): value(data), next(_next) {}
 };
 
-int MCD(int a, int b);
-
-int pow(int a, int b);
-
 template <typename T>
 class List {
 private:
   Node<T> *head;
-
-  Node<T>* split(Node<T>* head){
-    Node<T>* slow = head;
-    Node<T>* fast = head->next;
-
-    while(fast && fast->next){
-      slow = slow->next;
-      fast = fast->next->next;
-    }
-
-    Node<T>* mid = slow->next;
-    slow->next = nullptr;
-    return mid;
-  }
-
-  Node<T>* merge(Node<T> *left, Node<T> *right){
-    if(!left) return right;
-    if(!right) return left;
-
-    if(left->value < right->value) {
-      left->next = merge(left->next, right);
-      return left;
-    } else {
-      right->next = merge(left, right->next);
-      return right;
-    }
-  }
-
-  Node<T>* mergeSort(Node<T> *head){
-    if(!head || !head->next){
-      return head;
-    }
-
-    Node<T> *mid = split(head);
-
-    Node<T> *left = mergeSort(head);
-    Node<T> *right = mergeSort(mid);
-
-    return merge(left, right);
-  }
 
 public:
   List(): head(nullptr) {}
@@ -153,11 +108,7 @@ public:
     }
   }
 
-  void sort(){
-    head = mergeSort(head);
-  }
-
-  void insertionSort(){
+  void sort(){ // Insertion Sort
     if (!head || !head->next){
       return;
     }
@@ -208,50 +159,6 @@ public:
     delete temp;
   }
 
-  int getBits(){
-    int count{};
-    int result{};
-    Node<T> *curr = head;
-    do{
-      result += curr->value*std::pow(2,count);
-      count++;
-      curr = curr->next;
-    }while(curr);
-
-    return result;
-  }
-
-  List<T> getMid(){
-    List<T> list;
-    int mid = this->size()/2;
-
-    Node<T> *curr = head;
-
-    for (int i = 0; i < mid; i++){
-      curr = curr->next;
-    }
-
-    while(curr){
-      list.push_front(curr->value);
-      curr = curr->next;
-    }
-    list.reverse();
-    return list;
-  }
-
-  bool isCycle(){
-    Node<T>* slow = head;
-    Node<T>* fast = head;
-    while (fast && fast->next) {
-      slow = slow->next;
-      fast = fast->next->next;
-      if(fast == slow){
-        return true;
-      }
-    }
-    return false;
-  }
-
   void reverse(){
     Node<T> *prev = nullptr;
     Node<T> *curr = head;
@@ -265,140 +172,7 @@ public:
     }
     head = prev;
   }
-
-  void removeNfromTheEnd(int index){
-    this->reverse();
-    this->remove(index - 1);
-    this->reverse();
-  }
-
-  void reverseFromNtoM(int left, int right){
-    if (left >= right || !head) {
-      return;
-    }
-
-    Node<T>* prev = nullptr;
-    Node<T>* curr = head;
-    Node<T>* next = nullptr;
-
-    for (int i = 0; i < left - 1 && curr; i++) {
-      prev = curr;
-      curr = curr->next;
-    }
-
-    Node<T>* start = prev;
-    Node<T>* end = curr;
-
-    for (int i = 0; i < right - left + 1 && curr; i++) {
-      next = curr->next;
-      curr->next = prev;
-      prev = curr;
-      curr = next;
-    }
-
-    if (start) {
-      start->next = prev;
-    } else {
-      head = prev;
-    }
-    end->next = curr;
-  }
-
-  void removeElements(T target){
-    if(!head){
-      return;
-    }
-    while(head->value == target){
-      Node<T>* temp = head;
-      head = head->next;
-      delete temp;
-    }
-    Node<T>* curr = head;
-    do{
-      if(curr->next && curr->next->value == target){
-        Node<T>* temp = curr->next;
-        curr->next = curr->next->next;
-        delete temp;
-      }else{
-        curr = curr->next;
-      }
-    } while(curr->next && curr);
-  }
-
-  void insertMCD(){
-    Node<T> *curr = head;
-    while(curr->next){
-      Node<T> *temp = new Node(MCD(curr->value, curr->next->value), curr->next);
-      curr->next = temp;
-      curr = temp->next;
-    }
-  }
-
-  void swap(int index1, int index2){
-    if(index1 > this->size() && index2 > this->size()){
-      return;
-    }
-
-    Node<T>* curr1 = head;
-    Node<T>* curr2 = head;
-
-    for(int i = 0; i < index1; i++){
-      curr1 = curr1->next;
-    }
-
-    for(int i = 0; i < index2; i++){
-      curr2 = curr2->next;
-    }
-
-    T temp = curr1->value;
-    curr1->value = curr2->value;
-    curr2->value = temp;
-    
-  }
-
-  void swapPairs(){
-    int count{};
-    Node<T>* curr = head;
-    while(curr){
-      if(count%2 == 0 && curr->next){
-        T temp = curr->value;
-        curr->value = curr->next->value;
-        curr->next->value = temp;
-      }
-      curr = curr->next;
-      count++;
-    }
-  }
-
-  void connectToFinal(){
-    Node<T>* curr = head;
-    while(curr->next){
-      curr = curr->next;
-    }
-    curr->next = head;
-  }
-
-  void display(){
-    Node<T>* curr = head;
-    while (curr){
-      if(!curr->next){
-        std::cout<<curr->value; 
-      }else{
-        std::cout<<curr->value<<" -> ";
-      }
-      curr = curr->next;
-    }
-    std::cout<<std::endl;
-  }
 };
-
-int MCD(int a, int b){
-  if(b == 0){
-    return a;
-  }
-  return MCD(b, a%b);
-}
-
 
 template<typename T> 
 List<T> mergeOrderedList(List<T> &list1, List<T> &list2){
