@@ -172,6 +172,15 @@ public:
     }
     head = prev;
   }
+
+  void display(){
+    Node<T>* curr = head;
+    while(curr->next){
+      std::cout<<curr->value<<" -> ";
+      curr = curr->next;
+    }
+    std::cout<<curr->value<<std::endl;
+  }
 };
 
 template<typename T> 

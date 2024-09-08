@@ -10,8 +10,4 @@ int main(){
   lista.push_back(4);
   lista.push_back(5);
   lista.display();
-
-  lista.reverseFromNtoM(2,4);
-
-  lista.display();
 }
