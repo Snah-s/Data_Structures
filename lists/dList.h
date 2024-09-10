@@ -139,7 +139,7 @@ public:
 
   void clear(){
     while (head) {
-      pop_front(head, tail);
+      pop_front();
     }
   }
 
