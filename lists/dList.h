@@ -7,7 +7,7 @@ struct Node {
   Node *prev;
   Node *next;
   Node *child;
-  Node(): val(0), prev(nullptr), next(nullptr){}
+  Node(): val(-1), prev(nullptr), next(nullptr){}
   Node(T value): val(value), prev(nullptr), next(nullptr){}
   Node(Node<T> *_prev, T value): val(value), prev(_prev), next(nullptr){}
   Node(T value, Node<T> *_next): val(value), prev(nullptr), next(_next){}
@@ -23,10 +23,16 @@ private:
 public:
   List(): head(nullptr), tail(nullptr){}
   T front(){
+    if (!head){
+      return T();
+    }
     return head->val;
   }
 
   T back(){
+    if (!tail){
+      return T();
+    }
     return tail->val;
   }
 
