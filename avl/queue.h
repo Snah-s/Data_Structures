@@ -1,26 +1,26 @@
 // Clase Base
 
 template <typename T>
-struct Node {
+struct DNode {
   T val;
-  Node *prev;
-  Node *next;
+  DNode *prev;
+  DNode *next;
   
-  Node(): val(0), prev(nullptr), next(nullptr) {}
-  Node(T value): val(value), prev(nullptr), next(nullptr) {}
-  Node(Node<T> *_prev, T value): val(value), prev(_prev), next(nullptr) {}
-  Node(T value, Node<T> *_next): val(value), prev(nullptr), next(_next) {}
-  Node(Node<T> *_prev, T value, Node<T> *_next): val(value), prev(_prev), next(_next) {}
+  DNode(): val(0), prev(nullptr), next(nullptr) {}
+  DNode(T value): val(value), prev(nullptr), next(nullptr) {}
+  DNode(DNode<T> *_prev, T value): val(value), prev(_prev), next(nullptr) {}
+  DNode(T value, DNode<T> *_next): val(value), prev(nullptr), next(_next) {}
+  DNode(DNode<T> *_prev, T value, DNode<T> *_next): val(value), prev(_prev), next(_next) {}
 };
 
 template <typename T>
-class List {
+class DList {
 private:
-  Node<T> *head;
-  Node<T> *tail;
+  DNode<T> *head;
+  DNode<T> *tail;
 
 public:
-  List(): head(nullptr), tail(nullptr) {}
+  DList(): head(nullptr), tail(nullptr) {}
 
   T front() const {
     if (head) return head->val;
@@ -32,33 +32,33 @@ public:
     return T();
   }
 
-  Node<T>* getHead() const {
+  DNode<T>* getHead() const {
     return this->head;
   }
 
   void push_front(T value) {
-    Node<T> *newNode = new Node<T>(value, head);
+    DNode<T> *newDNode = new DNode<T>(value, head);
     if (head) {
-      head->prev = newNode;
+      head->prev = newDNode;
     } else {
-      tail = newNode;
+      tail = newDNode;
     }
-    head = newNode;
+    head = newDNode;
   }
 
   void push_back(T value) {
-    Node<T> *newNode = new Node<T>(tail, value);
+    DNode<T> *newDNode = new DNode<T>(tail, value);
     if (tail) {
-      tail->next = newNode;
+      tail->next = newDNode;
     } else {
-      head = newNode;
+      head = newDNode;
     }
-    tail = newNode;
+    tail = newDNode;
   }
 
   void pop_front() {
     if (head) {
-      Node<T> *temp = head;
+      DNode<T> *temp = head;
       head = head->next;
       if (head) {
         head->prev = nullptr;
@@ -71,7 +71,7 @@ public:
 
   void pop_back() {
     if (tail) {
-      Node<T> *temp = tail;
+      DNode<T> *temp = tail;
       tail = tail->prev;
       if (tail) {
         tail->next = nullptr;
@@ -89,17 +89,17 @@ public:
     } else if (index == size()) {
       push_back(value);
     } else {
-      Node<T> *newNode = new Node<T>(value);
-      Node<T> *curr = head;
+      DNode<T> *newDNode = new DNode<T>(value);
+      DNode<T> *curr = head;
       for (int i = 0; i < index - 1; i++) {
         curr = curr->next;
       }
-      newNode->prev = curr;
-      newNode->next = curr->next;
+      newDNode->prev = curr;
+      newDNode->next = curr->next;
       if (curr->next) {
-        curr->next->prev = newNode;
+        curr->next->prev = newDNode;
       }
-      curr->next = newNode;
+      curr->next = newDNode;
     }
   }
 
@@ -110,11 +110,11 @@ public:
     } else if (index == size() - 1) {
       pop_back();
     } else {
-      Node<T> *curr = head;
+      DNode<T> *curr = head;
       for (int i = 0; i < index; i++) {
         curr = curr->next;
       }
-      Node<T> *temp = curr;
+      DNode<T> *temp = curr;
       curr->prev->next = curr->next;
       if (curr->next) {
         curr->next->prev = curr->prev;
@@ -128,7 +128,7 @@ public:
   }
 
   int size() const {
-    Node<T> *curr = head;
+    DNode<T> *curr = head;
     int size = 0;
 
     while (curr) {
@@ -145,7 +145,44 @@ public:
     }
   }
 
-  ~List() {
+  ~DList() {
     clear();
+  }
+};
+
+// FIFO -> First In First Out
+template <typename T>
+class Queue{
+private:
+  DList<T> list;
+public:
+  Queue(){}
+
+  ~Queue(){
+    list.clear();
+  }
+
+  void enqueue(T value){
+    list.push_back(value);
+  }
+
+  void dequeue(){
+    list.pop_front();
+  }
+
+  T front(){
+    return list.front();
+  }
+
+  T back(){
+    return list.back();
+  }
+
+  bool empty(){
+    return list.empty();
+  }
+
+  int size(){
+    return list.size();
   }
 };

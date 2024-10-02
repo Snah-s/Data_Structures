@@ -1,4 +1,5 @@
 #include <iostream>
+#include "queue.h"
 
 template <typename T>
 struct BTNode {
@@ -118,4 +119,18 @@ bool isBST(BTNode<T> *node, T min, T max){
 template <typename T>
 bool isLeaf(BTNode<T> *node){
   return !node->left && !node->right;
+}
+
+template <typename T>
+void bfs(BTNode<T> *node){
+  if (!node) return;
+  Queue<BTNode<T>*> q;
+  q.push(node);
+  while (!q.empty()){
+    BTNode<T> *curr = q.front();
+    q.pop();
+    std::cout << curr->val << " ";
+    if (curr->left) q.push(curr->left);
+    if (curr->right) q.push(curr->right);
+  }
 }
