@@ -35,15 +35,20 @@ void solution(List<T> &list){
   bfs(root);
 }
 
+template <typename T>
+void solution(T arr[], int size){
+  Node<T> *root = nullptr;
+  for (int i = 0; i < size; i++){
+    root = insert(root, arr[i]);
+  }
+  bfs(root);
+}
+
 // array = [2, 4, 1, 3, 5, 6, 7]
 
 int main() {
-  List<int> list;
-  list.push_front(1);
-  list.push_front(2);
-  list.push_front(3);
-  list.reverse();
-  solution(list);
+  int array[7] = {2, 4, 1, 3, 5, 6, 7};
+  solution(array, 7);
   std::cout<<std::endl;
   return 0;
 }
