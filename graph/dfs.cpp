@@ -1,82 +1,127 @@
-#include <iostream>
-#include <vector>
-using namespace std;
+#include "../queue_stack/stack.h"
+#include "../queue_stack/queueVector.h"
 
-bool dfs(int node, vector<vector<int>>& graph, vector<int>& state) {
-  state[node] = 1;
+// 1. **DFS Iterativo con Pila**
 
-  for (int neighbor : graph[node]) {
-    if (state[neighbor] == 1) {
-      return true;
-    }
-    if (state[neighbor] == 0 && dfs(neighbor, graph, state)) {
-      return true;
-    }
-  }
-
-  state[node] = 2;
-  return false;
-}
-
-bool detectCycleDFS(int nodes, vector<vector<int>>& graph) {
-  vector<int> state(nodes, 0);
-
-  for (int i = 0; i < nodes; ++i) {
-    if (state[i] == 0) {
-      if (dfs(i, graph, state)) {
-        return true;
+void dfs(int start, vector<vector<int>>& adj, vector<bool>& visited) {
+  Stack<int> stack;
+  stack.push(start);
+  while (!stack.empty()) {
+    int node = stack.top();
+    stack.pop();
+    if (!visited[node]) {
+      visited[node] = true;
+      for (int neighbor : adj[node]) {
+        if (!visited[neighbor]) {
+          stack.push(neighbor);
+        }
       }
     }
   }
-  return false;
 }
 
-/*
 
-// MATRIZ DE ADYACENCIA
-
-bool dfs(int node, vector<vector<int>>& matrix, vector<int>& state) {
-  state[node] = 1;
-
-  for (int neighbor = 0; neighbor < matrix.size(); ++neighbor) {
-    if (matrix[node][neighbor] == 1) {
-      if (state[neighbor] == 1) {
-        return true;
-      }
-      if (state[neighbor] == 0 && dfs(neighbor, matrix, state)) {
-        return true;
-      }
+// 2. **DFS con Registro de Tiempos de Entrada y Salida**
+int time = 0;
+void dfs(int node, vector<vector<int>>& adj, vector<bool>& visited, vector<int>& in, vector<int>& out) {
+  visited[node] = true;
+  in[node] = time++;
+  for (int neighbor : adj[node]) {
+    if (!visited[neighbor]) {
+      dfs(neighbor, adj, visited, in, out);
     }
   }
+  out[node] = time++;
+}
 
-  state[node] = 2;
+
+// 3. **DFS para Búsqueda de Ciclos**
+
+enum Color { WHITE, GRAY, BLACK };
+bool dfs(int node, vector<vector<int>>& adj, vector<Color>& color) {
+  color[node] = GRAY;
+  for (int neighbor : adj[node]) {
+    if (color[neighbor] == GRAY) return true; // ciclo detectado
+    if (color[neighbor] == WHITE && dfs(neighbor, adj, color)) return true;
+  }
+  color[node] = BLACK;
   return false;
 }
 
-bool detectCycleDFS(int nodes, vector<vector<int>>& matrix) {
-  vector<int> state(nodes, 0); 
 
-  for (int i = 0; i < nodes; ++i) {
-    if (state[i] == 0) {
-      if (dfs(i, matrix, state)) {
-        return true;
+// 4. **DFS para Encontrar Componentes Fuertemente Conexas (Kosaraju's Algorithm)**
+void dfs(int node, vector<vector<int>>& adj, vector<bool>& visited, Stack<int>& stack) {
+  visited[node] = true;
+  for (int neighbor : adj[node])
+    if (!visited[neighbor])
+      dfs(neighbor, adj, visited, stack);
+  stack.push(node);
+}
+
+void dfs(int node, vector<vector<int>>& transpose, vector<bool>& visited) {
+  visited[node] = true;
+  for (int neighbor : transpose[node])
+    if (!visited[neighbor])
+      dfs(neighbor, transpose, visited);
+}
+
+
+// 5. **DFS para Árbol de Baja Profundidad (Low-Link Values)**
+
+vector<int> disc, low;
+vector<bool> visited;
+int time = 0;
+
+void dfs(int node, int parent, vector<vector<int>>& adj) {
+  visited[node] = true;
+  disc[node] = low[node] = ++time;
+  int children = 0;
+  for (int neighbor : adj[node]) {
+    if (!visited[neighbor]) {
+      children++;
+      dfs(neighbor, node, adj);
+      low[node] = min(low[node], low[neighbor]);
+      if (low[neighbor] > disc[node]) {
       }
+    } else if (neighbor != parent) {
+      low[node] = min(low[node], disc[neighbor]);
     }
   }
-  return false;
 }
 
-*/
 
-int main() {
-  int nodes = 4;
-  vector<vector<int>> graph = {{1}, {2}, {3}, {1}};
+// 6. **DFS para Contar Componentes Conexas**
 
-  if (detectCycleDFS(nodes, graph)) {
-    cout << "Ciclo detectado" << endl;
-  } else {
-    cout << "No se detectó ciclo" << endl;
+void dfs(int node, vector<vector<int>>& adj, vector<bool>& visited) {
+  visited[node] = true;
+  for (int neighbor : adj[node]) {
+    if (!visited[neighbor]) {
+      dfs(neighbor, adj, visited);
+    }
   }
+}
 
-  return 0;
+int countComponents(int n, vector<vector<int>>& adj) {
+  vector<bool> visited(n, false);
+  int count = 0;
+  for (int i = 0; i < n; i++) {
+    if (!visited[i]) {
+      dfs(i, adj, visited);
+      count++;
+    }
+  }
+  return count;
+}
+
+
+// 7. **DFS con Camino de Restauración**
+void dfs(int node, vector<vector<int>>& adj, vector<bool>& visited, vector<int>& path) {
+  visited[node] = true;
+  path.push_back(node);
+  for (int neighbor : adj[node]) {
+    if (!visited[neighbor]) {
+      dfs(neighbor, adj, visited, path);
+    }
+  }
+  path.pop_back();
 }
